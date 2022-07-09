@@ -44,7 +44,7 @@ bool init(){
         cout<<SDL_GetError()<<endl;
         return false;
     }
-    font = TTF_OpenFont("/media/ronnie/Files/CPlusPlus/Home/fonts/OpenSans-Light.ttf",12);
+    font = TTF_OpenFont("/media/ronnie/Files/CPlusPlus/Home/fonts/OpenSans-Bold.ttf",17);
     if(!font){
         cout<<"We failed to initialize the font"<<endl;
         cout<<SDL_GetError()<<endl;

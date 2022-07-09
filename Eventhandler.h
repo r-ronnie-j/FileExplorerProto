@@ -2,7 +2,7 @@
 #include <cstring>
 #include <map>
 
-InputComponent *targetInput = NULL;
+InputComponent *targetInput = NULL,*pathInput =NULL;
 vector<InputComponent *> textGroup;
 ButtonComponent *targetButton = NULL;
 vector<ButtonComponent *> buttonGroup;
@@ -184,4 +184,7 @@ bool determineTargetButton() {
         }
     }
     return false;
+}
+void setPathInput(InputComponent* i){
+    pathInput = i;
 }

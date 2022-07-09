@@ -14,3 +14,5 @@ SDL_Window *window;
 SDL_Renderer *renderer;
 SDL_Surface* surface;
 TTF_Font *font ;
+enum mainIndex{start,all,img,aud,vid,doc,none};
+mainIndex mainDefault=start;

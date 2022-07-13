@@ -364,6 +364,9 @@ public:
         free();
     }
 
+    InputComponent* getTarget(){
+        return target;
+    }
     void setText(string data) {
         text = data;
     }
@@ -374,7 +377,9 @@ public:
         SDL_FreeSurface(surf);
         surf = NULL;
     }
-
+    string getText(){
+        return text;
+    }
     void setRect(int x, int y, int w, int h) {
         r.x = x;
         r.y = y;
@@ -520,6 +525,10 @@ public:
         text = s;
     }
 
+    string getText(){
+        return text;
+    }
+
     void free() {
         SDL_FreeSurface(surf);
         SDL_DestroyTexture(texture);
@@ -535,9 +544,51 @@ public:
         setRect(x, y);
     }
 
+    bool drawBorder(string b, int red, int green, int blue, int alpha, int thickness) {
+        SDL_Rect rec = {0, 0, 0, 0};
+        SDL_SetRenderDrawColor(renderer, red, green, blue, alpha);
+        for (int i = 0; i < b.length(); i++) {
+            char c = tolower(b[i]);
+            if (c == 'u') {
+                rec.x = r.x;
+                rec.y = r.y;
+                rec.w = r.w;
+                rec.h = thickness;
+            } else if (c == 'l') {
+                rec.x = r.x;
+                rec.y = r.y;
+                rec.w = thickness;
+                rec.h = r.h;
+            } else if (c == 'd') {
+                rec.x = r.x;
+                rec.y = r.y + r.h;
+                rec.w = r.w;
+                rec.h = thickness;
+            } else if (c == 'r') {
+                rec.x = r.x + r.w;
+                rec.y = r.y;
+                rec.w = thickness;
+                rec.h = r.h;
+            } else {
+                continue;
+            }
+
+            if (SDL_RenderFillRect(renderer, &rec) < 0) {
+                cout << "Failed to draw a line" << endl;
+                cout << SDL_GetError() << endl;
+                return false;
+            };
+        }
+        return true;
+    }
+
+    bool drawBorder(string b) {
+        return drawBorder(b, 0, 0, 0, 255, 2);
+    }
+
     bool generateTexture(string s) {
         SDL_Color color = {0, 0, 0};
-        SDL_Surface *su = TTF_RenderText_Solid(font, text.c_str(), color);
+        SDL_Surface *su = TTF_RenderText_Solid(bFont, text.c_str(), color);
         if (!su) {
             cout << "We failed to generate the surface at text" << endl;
             cout << SDL_GetError() << endl;
@@ -559,12 +610,24 @@ public:
         generateTexture(text);
     }
 
+    bool displayTexture(){
+        SDL_RenderCopy(renderer,texture,NULL,&r);
+    }
+    SDL_Rect getRect(){
+        return r;
+    }
     int getWidth() {
         return r.w;
     }
 
     int getHeight() {
         return r.h;
+    }
+    int getY(){
+        return r.y;
+    }
+    int getX(){
+        return r.x;
     }
 
     SDL_Surface *getSurf() {
@@ -638,6 +701,7 @@ private:
     SDL_Rect r;
     string path;
     string name;
+    FileElement f;
 public:
     CombinedComponent() {
         surf = NULL;
@@ -719,4 +783,9 @@ public:
         }
         return true;
     }
+    void addFileElement(FileElement f){
+        this->f= f;
+    }
 };
+
+

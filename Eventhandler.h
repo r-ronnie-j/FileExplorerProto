@@ -1,16 +1,19 @@
 #include <vector>
 #include <cstring>
 #include <map>
-
+vector<FileElement> imgFiles,audioFiles,videoFiles,docFiles;
+map<mainIndex,vector<FileElement>*> getFileforIndex = {{img,&imgFiles},{aud,&audioFiles},{vid,&videoFiles},{doc,&docFiles}};
 InputComponent *targetInput = NULL,*pathInput =NULL;
 vector<InputComponent *> textGroup;
 ButtonComponent *targetButton = NULL;
 vector<ButtonComponent *> buttonGroup;
-map<string,string> shiftClickText={{"1","!"},{"2","@"},{"3","#"},{"4","$"},{"5","%"},{"6","^"},{"7","&"},{"8","*"},{"9","("},{"0",")"},{"`","~"},{"[","{"},{"]","}"},{"\\","|"},{";",":"},{"\'","\""},{",","<"},{".",">"},{"/","?"}};
-
+map<string,string> shiftClickText={{"1","!"},{"2","@"},{"3","#"},{"4","$"},{"5","%"},{"6","^"},{"7","&"},{"8","*"},{"9","("},{"0",")"},{"`","~"},{"[","{"},{"]","}"},{"\\","|"},{";",":"},{"\'","\""},{",","<"},{".",">"},{"/","?"},{"=","+"},{"-","_"}};
+TextComponent *targetCollection = NULL;
+vector<TextComponent *> collectionGroup;
 
 bool determineTargetInput();
 bool determineTargetButton();
+bool determineTargetCollection();
 
 void textInputHandler(SDL_KeyboardEvent e) {
     if(targetInput == NULL){
@@ -19,10 +22,12 @@ void textInputHandler(SDL_KeyboardEvent e) {
     SDL_Keycode k = e.keysym.sym;
     string setData = "";
     string data = static_cast<string>(SDL_GetKeyName(k));
-    cout << (e.keysym.mod == KMOD_LSHIFT) << endl;
     if (data.length() == 1) {
         if (isalpha(data[0])) {
+            cout<<e.keysym.mod<<endl;
+            cout<<SDL_GetModState()<<endl;
             if (e.keysym.mod == KMOD_CAPS) {
+                cout<<"We failed to obtain the caps lock"<<endl;
                 if (e.keysym.mod == KMOD_LSHIFT || e.keysym.mod == KMOD_RSHIFT) {
                     setData += tolower(data[0]);
                 } else {
@@ -67,6 +72,7 @@ void textInputHandler(SDL_KeyboardEvent e) {
 void mouseClickHandler() {
     targetInput =NULL;
     targetButton =NULL;
+    targetCollection = NULL;
     if (determineTargetInput()) {
         targetInput->setActive(true);
         for (vector<InputComponent *>::iterator p = textGroup.begin(); p < textGroup.end(); p++) {
@@ -81,7 +87,7 @@ void mouseClickHandler() {
             (*p)->setActive(false);
         }
         if(determineTargetButton()){
-            targetButton->setActive(true);
+            cout<<"Button clicked"<<endl;
             for (vector<ButtonComponent *>::iterator p = buttonGroup.begin(); p < buttonGroup.end(); p++) {
                 if (*p == targetButton) {
                     continue;
@@ -89,8 +95,58 @@ void mouseClickHandler() {
                     (*p)->setActive(false);
                 }
             }
+            cout<<targetButton->getText()<<endl;
+            if(targetButton->getText() == "<<PREV"){
+                if(!startp ==0){
+                    startp-=1;
+                }
+            }else if(targetButton->getText()=="NEXT>>"){
+                if(mainDefault != none){
+                    if(!((startp+1)*np >getFileforIndex[mainDefault]->size())){
+                        startp+=1;
+                    }
+                }else{
+                    if(!((startp+1)*np >tp)){
+                        startp+=1;
+                    }
+                }
+            }else if(targetButton->getText()=="Search"){
+                startp=0;
+                string searchText = targetButton->getTarget()->getText();
+                mainDefault = none;
+                goPath=false;
+                searchName = searchText;
+            }else if(targetButton->getText()=="GO"){
+                startp=0;
+                string path = targetButton->getTarget()->getText();
+                pathGo=filesystem::path(path);
+                mainDefault=none;
+                goPath=true;
+            }
         }else{
+            for (vector<ButtonComponent *>::iterator p = buttonGroup.begin(); p < buttonGroup.end(); p++) {
+                (*p)->setActive(false);
+            }
+            if(determineTargetCollection()){
+                if(targetCollection->getText()=="Images"){
+                    mainDefault = img;
+                    startp=0;
+                }else if(targetCollection->getText()=="Videos"){
+                    mainDefault= vid;
+                    startp =0;
+                }else if(targetCollection->getText()=="Documents"){
+                    mainDefault = doc;
+                    startp=0;
+                }else if(targetCollection->getText()=="Audios"){
+                    mainDefault= aud;
+                    startp=0;
+                }else if(targetCollection->getText()=="Home"){
+                    mainDefault = start;
+                    startp=0;
+                }
+            }else{
 
+            }
         }
     }
     return;
@@ -146,6 +202,20 @@ void removeTargetButton(ButtonComponent *target) {
     }
 }
 
+void removeTargetCollection(TextComponent *target) {
+    for (vector<TextComponent *>::iterator p = collectionGroup.begin(); p < collectionGroup.end(); p++) {
+        if (*p == target) {
+            collectionGroup.erase(p);
+            return;
+        }
+    }
+}
+
+void removeTargetCollection(TextComponent target){
+    removeTargetCollection(&target);
+}
+
+
 void removeTargetButton(ButtonComponent target) {
     removeTargetButton(&target);
     return;
@@ -187,4 +257,35 @@ bool determineTargetButton() {
 }
 void setPathInput(InputComponent* i){
     pathInput = i;
+}
+
+void addTargetCollection(TextComponent *t){
+    for (vector<TextComponent *>::iterator p = collectionGroup.begin(); p < collectionGroup.end(); p++) {
+        if (*p == targetCollection) {
+            return;
+        }
+    }
+    collectionGroup.push_back(t);
+}
+
+void addTargetCollection(TextComponent t){
+    addTargetCollection(&t);
+}
+
+bool determineTargetCollection() {
+    if (collectionGroup.empty()) {
+        cout << "Is it empty" << endl;
+        return false;
+    }
+    int x, y;
+    SDL_GetMouseState(&x, &y);
+    for (vector<TextComponent *>::iterator p = collectionGroup.begin(); p < collectionGroup.end(); p++) {
+        SDL_Rect a = (*p)->getRect();
+        int x1 = a.x, y1 = a.y, x2 = a.x + a.w, y2 = a.y + a.h;
+        if (x >= x1 && x <= x2 && y >= y1 && y <= y2) {
+            targetCollection = *p;
+            return true;
+        }
+    }
+    return false;
 }

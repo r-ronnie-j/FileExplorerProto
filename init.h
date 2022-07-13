@@ -50,5 +50,9 @@ bool init(){
         cout<<SDL_GetError()<<endl;
         return false;
     }
+    bFont = TTF_OpenFont("/media/ronnie/Files/CPlusPlus/Home/fonts/OpenSans-ExtraBold.ttf",25);
+    if(!bFont){
+        bFont = font;
+    }
     return true;
 }

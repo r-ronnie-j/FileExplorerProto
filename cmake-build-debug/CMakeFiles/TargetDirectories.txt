@@ -1,0 +1,3 @@
+/media/ronnie/Files/CPlusPlus/Home/cmake-build-debug/CMakeFiles/Home.dir
+/media/ronnie/Files/CPlusPlus/Home/cmake-build-debug/CMakeFiles/edit_cache.dir
+/media/ronnie/Files/CPlusPlus/Home/cmake-build-debug/CMakeFiles/rebuild_cache.dir

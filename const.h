@@ -23,6 +23,7 @@ TTF_Font *font ;
 TTF_Font *bFont;
 enum mainIndex{start,all,img,aud,vid,doc,none};
 int startp =0,np=0,tp=0;
+int sidebarx=0,sidebary=0;
 mainIndex mainDefault=start;
 array<string,2> filePath= {"/media/ronnie/Data/Udemy - QML for Beginners with Qt 5 2020-10"};
 array<string,9>imgExt{".tif",".tiff",".bmp",".png",".jpg",".jpeg",".gif",".eps",".raw"};

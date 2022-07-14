@@ -10,10 +10,12 @@ vector<ButtonComponent *> buttonGroup;
 map<string,string> shiftClickText={{"1","!"},{"2","@"},{"3","#"},{"4","$"},{"5","%"},{"6","^"},{"7","&"},{"8","*"},{"9","("},{"0",")"},{"`","~"},{"[","{"},{"]","}"},{"\\","|"},{";",":"},{"\'","\""},{",","<"},{".",">"},{"/","?"},{"=","+"},{"-","_"}};
 TextComponent *targetCollection = NULL;
 vector<TextComponent *> collectionGroup;
+vector<CombinedComponent> c;
 
 bool determineTargetInput();
 bool determineTargetButton();
 bool determineTargetCollection();
+int findFileToOpen();
 
 void textInputHandler(SDL_KeyboardEvent e) {
     if(targetInput == NULL){
@@ -128,6 +130,7 @@ void mouseClickHandler() {
                 (*p)->setActive(false);
             }
             if(determineTargetCollection()){
+                cout<<"is there a target collection"<<endl;
                 if(targetCollection->getText()=="Images"){
                     mainDefault = img;
                     startp=0;
@@ -145,7 +148,46 @@ void mouseClickHandler() {
                     startp=0;
                 }
             }else{
-
+                cout<<"Hi"<<endl;
+                int position = findFileToOpen();
+                if(position == 0){return ; }
+                if((np*startp+position)>c.size()){
+                    return;
+                }else{
+                    if(mainDefault==start){
+                        switch (position){
+                            case 1:
+                                mainDefault = img;
+                                searchName="";
+                                goPath =false;
+                                pathGo = filesystem::path();
+                                break;
+                            case 2:
+                                mainDefault = aud;
+                                searchName ="";
+                                goPath = false;
+                                pathGo=filesystem::path();
+                                break;
+                            case 3:
+                                mainDefault = vid;
+                                searchName = "";
+                                goPath= false;
+                                pathGo = filesystem::path();
+                                break;
+                            case 4:
+                                mainDefault = doc;
+                                searchName ="";
+                                goPath= false;
+                                pathGo= filesystem::path();
+                                break;
+                        }
+                        return ;
+                    }else{
+                        cout<<(c[np*start+position-1].getFileElement().getPath().c_str())<<endl;
+                        system(("xdg-open \""+c[np*start+position-1].getFileElement().getPath()+"\"").c_str());
+                        return;
+                    }
+                }
             }
         }
     }
@@ -288,4 +330,31 @@ bool determineTargetCollection() {
         }
     }
     return false;
+}
+
+int findFileToOpen(){
+    int x, y;
+    SDL_GetMouseState(&x,&y);
+    if(x<sidebarx || y<sidebary){
+        return 0;
+    }
+    int width= CURRENT_SCREEN_WIDTH - sidebarx;
+    int xn =width/130;
+    int height = CURRENT_SCREEN_HEIGHT - sidebary;
+    int yn= height/130;
+    if(x>sidebarx+xn*130){
+        return 0;
+    }
+    if(y>sidebary+xn*130){
+        return 0;
+    }
+    int xpos=x-sidebarx;
+    int ypos= y-sidebary;
+    int row = xpos/130+1;
+    int column= ypos/130;
+    int index= column*xn+row;
+    cout<<"index :"<<index<<"row :"<<row<<"column :"<<column<<"xn :"<<xn<<"yn :"<<yn<<endl;
+    if(index<np){return index;}else{
+        return 0;
+    }
 }

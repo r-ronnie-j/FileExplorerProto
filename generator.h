@@ -136,6 +136,7 @@ bool displayInMain(string s,vector<CombinedComponent>& c,int x,int y){
     for(int i=0;i<f.size();i++){
         c[i].setName(f.at(i).getName());
         c[i].setPath(dataPicture[f.at(i).getIndex()]);
+        //c[i].addFileElement(f[i]);
     }
     return true;
 }
@@ -159,6 +160,7 @@ bool displayInMain(mainIndex m,vector<CombinedComponent>&c,int x,int y){
             for(int i=0;i<imgFiles.size();i++){
                 c[i].setPath(dataPicture[m]);
                 c[i].setName(imgFiles.at(i).getName());
+                c[i].addFileElement(imgFiles[i]);
             }
             return true;
         case aud:
@@ -166,6 +168,7 @@ bool displayInMain(mainIndex m,vector<CombinedComponent>&c,int x,int y){
             for(int i=0;i<audioFiles.size();i++){
                 c[i].setPath(dataPicture[m]);
                 c[i].setName(audioFiles.at(i).getName());
+                c[i].addFileElement(audioFiles[i]);
             }
             return true;
         case vid:
@@ -173,6 +176,7 @@ bool displayInMain(mainIndex m,vector<CombinedComponent>&c,int x,int y){
             for(int i=0;i<videoFiles.size();i++){
                 c[i].setPath(dataPicture[m]);
                 c[i].setName(videoFiles.at(i).getName());
+                c[i].addFileElement(videoFiles[i]);
             }
             return true;
         case doc:
@@ -180,6 +184,7 @@ bool displayInMain(mainIndex m,vector<CombinedComponent>&c,int x,int y){
             for(int i=0;i<docFiles.size();i++){
                 c[i].setPath(dataPicture[m]);
                 c[i].setName(docFiles.at(i).getName());
+                c[i].addFileElement(docFiles[i]);
             }
             return true;
         default:
@@ -242,6 +247,7 @@ bool displayInMain(filesystem::path p,vector<CombinedComponent>&c,int x,int y){
     for(int i=0;i<f.size();i++){
         c[i].setName(f.at(i).getName());
         c[i].setPath(dataPicture[f.at(i).getIndex()]);
+        c[i].addFileElement(f[i]);
     }
     return true;
 }

@@ -786,6 +786,9 @@ public:
     void addFileElement(FileElement f){
         this->f= f;
     }
+    FileElement getFileElement(){
+        return this->f;
+    }
 };
 
 

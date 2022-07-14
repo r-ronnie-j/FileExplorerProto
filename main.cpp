@@ -65,7 +65,6 @@ int main(int argc, char *argv[]) {
     cout<<"audio loaded"<<endl;
     findFiles(doc,docFiles);
     cout<<"docs loaded"<<endl;
-    vector<CombinedComponent> c;
     while (game) {
         if (!setBackground(255, 255, 255, 255)) {
             return -1;
@@ -85,6 +84,8 @@ int main(int argc, char *argv[]) {
         if (!setTopBarInterior(i1, i2, b1, b2)) {
             return -1;
         }
+        sidebarx = sideBar.getWidth();
+        sidebary = sideBar.getY();
         setSidebarInterior(b3,b4,sideBar.getWidth(),sideBar.getY(),t0,t1,t2,t3,t4);
         if(mainDefault!=none) {
             displayInMain(mainDefault, c, sideBar.getWidth(), sideBar.getY());
@@ -107,7 +108,6 @@ int main(int argc, char *argv[]) {
             m=(startp+1)*np;
         }
         for(int i=startp*np;i<m;i++){
-            cout<<"generated"<<i<<endl;
             c[i].generateTexture();
             c[i].displayTexture();
         }
